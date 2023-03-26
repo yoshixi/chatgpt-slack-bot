@@ -1,0 +1,21 @@
+{
+  "editor.rulers": [120],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  // TODO: re-enable format on save once ESLint rules are more stable
+  // "editor.formatOnSave": false,
+  // "[javascript]": {
+  // 	"editor.formatOnSave": true
+  // },
+  // "[typescript]": {
+  // 	"editor.formatOnSave": true
+  // },
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.config": "./deno.jsonc",
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "bolt-typescript-boilerplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "build:watch": "tsc -w -p .",
+    "start": "npm run build && node dist/app.js",
+    "lint": "deno lint -c deno.jsonc && deno fmt -c deno.jsonc --check",
+    "lint:fix": "deno lint -c deno.jsonc && deno fmt -c deno.jsonc",
+    "test": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tsconfig/strictest": "1.0.2",
+    "@types/node": "18.15.10",
+    "ts-node": "10.9.1",
+    "typescript": "5.0.2"
+  },
+  "dependencies": {
+    "@slack/bolt": "^3.11.1",
+    "dotenv": "^16.0.1"
+  }
+}
