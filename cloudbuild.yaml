@@ -21,14 +21,15 @@ steps:
   - '--region=us-west1'
   - '--allow-unauthenticated'
   - '--set-env-vars'
-  - 'SLACK_BOT_TOKEN=${_SLACK_BOT_TOKEN},SLACK_SIGNING_SECRET=${_SLACK_SIGNING_SECRET}'
-    
+  - 'SLACK_BOT_TOKEN=${_SLACK_BOT_TOKEN},SLACK_SIGNING_SECRET=${_SLACK_SIGNING_SECRET},OPENAI_API_KEY=${_OPENAI_API_KEY}'
+
 substitutions:
     _ARTIFACT_REGISTRY_REPO: 'cloud-run-source-deploy' # default value
-    _IMAGE_NAME: 'bolt-typescript-boilerplate'
-    _SERVICE_NAME: 'bolt-typescript-boilerplate'
+    _IMAGE_NAME: 'chatgpt-slack-bot'
+    _SERVICE_NAME: 'chatgpt-slack-bot'
     _TAG_NAME: 'latest'
     _SLACK_SIGNING_SECRET: ''
     _SLACK_BOT_TOKEN: ''
+    _OPENAI_API_KEY: ''
 images:
 - us-west1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_IMAGE_NAME}:${_TAG_NAME}
