@@ -1,9 +1,13 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-internal-modules */
-import './utils/env';
-import { App, ExpressReceiver, LogLevel } from '@slack/bolt';
-import { isGenericMessageEvent } from './utils/helper';
-import { ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi } from 'openai';
+import "./utils/env";
+import { App, ExpressReceiver, LogLevel } from "@slack/bolt";
+import { isGenericMessageEvent } from "./utils/helper";
+import {
+  ChatCompletionRequestMessageRoleEnum,
+  Configuration,
+  OpenAIApi,
+} from "openai";
 
 export const CHAT_GPT_SYSTEM_PROMPT = `
 You are an excellent AI assistant Slack Bot.
@@ -19,7 +23,7 @@ Be sure to include a space before and after the single quote in the sentence.
 ex) word\`code\`word -> word \`code\` word
 Let's begin.
 `;
-export const GPT_BOT_NAME = 'GPT';
+export const GPT_BOT_NAME = "GPT";
 
 const postAsGptBot = async ({
   client,
@@ -35,27 +39,27 @@ const postAsGptBot = async ({
   return await client.chat.postMessage({
     channel,
     thread_ts: threadTs,
-    icon_emoji: ':robot_face:',
+    icon_emoji: ":robot_face:",
     username: GPT_BOT_NAME,
     text,
   });
 };
 
 const receiver = new ExpressReceiver({
-  signingSecret: process.env['SLACK_SIGNING_SECRET'] as string,
+  signingSecret: process.env["SLACK_SIGNING_SECRET"] as string,
 });
 
 const app = new App({
-  token: process.env['SLACK_BOT_TOKEN'] as string,
-  signingSecret: process.env['SLACK_SIGNING_SECRET'] as string,
+  token: process.env["SLACK_BOT_TOKEN"] as string,
+  signingSecret: process.env["SLACK_SIGNING_SECRET"] as string,
   receiver,
   logLevel: LogLevel.DEBUG,
   customRoutes: [{
-    path: '/ping',
-    method: ['GET'],
+    path: "/ping",
+    method: ["GET"],
     handler: (_req, res) => {
       res.writeHead(200);
-      res.end('yay!');
+      res.end("yay!");
     },
   }],
 });
@@ -65,25 +69,25 @@ app.use(async ({ next }) => {
 });
 
 // Listens to incoming messages that contain "hello"
-app.message('hello', async ({ message, say }) => {
+app.message("hello", async ({ message, say }) => {
   if (!isGenericMessageEvent(message)) return;
 
   // say() sends a message to the channel where the event was triggered
   await say({
     blocks: [
       {
-        type: 'section',
+        type: "section",
         text: {
-          type: 'mrkdwn',
+          type: "mrkdwn",
           text: `Hey there <@${message.user}>!`,
         },
         accessory: {
-          type: 'button',
+          type: "button",
           text: {
-            type: 'plain_text',
-            text: 'Click Me',
+            type: "plain_text",
+            text: "Click Me",
           },
-          action_id: 'button_click',
+          action_id: "button_click",
         },
       },
     ],
@@ -91,13 +95,13 @@ app.message('hello', async ({ message, say }) => {
   });
 });
 
-app.event('app_mention', async ({ event, client }) => {
+app.event("app_mention", async ({ event, client }) => {
   const { thread_ts: threadTs, bot_id: botId, text } = event as any;
 
   console.log(`received mention mention event: ${JSON.stringify(event)}`);
 
   if (botId || !threadTs) {
-    console.log('ignored event');
+    console.log("ignored event");
     await postAsGptBot({
       client,
       channel: event.channel,
@@ -132,15 +136,15 @@ app.event('app_mention', async ({ event, client }) => {
   });
 
   const configuration = new Configuration({
-    apiKey: process.env['OPENAI_API_KEY'] as string,
+    apiKey: process.env["OPENAI_API_KEY"] as string,
   });
   const openAIClient = new OpenAIApi(configuration);
 
-  let message = '';
+  let message = "";
   try {
     // Chat Completion API を呼び出す
     const response = await openAIClient.createChatCompletion({
-      model: 'gpt-3.5-turbo',
+      model: "gpt-3.5-turbo",
       // build message to send to GPT-3
       messages: [
         {
@@ -156,7 +160,7 @@ app.event('app_mention', async ({ event, client }) => {
       top_p: 0.5,
       frequency_penalty: 0.5,
     });
-    message = response?.data?.choices[0]?.message?.content || '';
+    message = response?.data?.choices[0]?.message?.content || "";
   } catch (e) {
     await postAsGptBot({
       client,
@@ -179,12 +183,12 @@ app.event('app_mention', async ({ event, client }) => {
       client,
       channel: event.channel,
       threadTs,
-      text: 'message from gpt is empty',
+      text: "message from gpt is empty",
     });
   }
 });
 
-app.action('button_click', async ({ body, ack, say }) => {
+app.action("button_click", async ({ body, ack, say }) => {
   // Acknowledge the action
   await ack();
   await say(`<@${body.user.id}> clicked the button`);
@@ -192,7 +196,7 @@ app.action('button_click', async ({ body, ack, say }) => {
 
 (async () => {
   // Start your app
-  const port = Number(process.env['PORT']) || 8080;
+  const port = Number(process.env["PORT"]) || 8080;
   await app.start(port);
 
   console.log(`⚡️ Bolt app is running on port ${port}!`);
